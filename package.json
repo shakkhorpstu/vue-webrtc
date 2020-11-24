@@ -1,12 +1,12 @@
 {
   "name": "vue-webrtc",
   "version": "1.2.2",
-  "description": "WebRTC video component for Vue.js",
+  "description": "Regenerate WebRTC video component for Vue.js",
   "main": "dist/index.js",
   "author": {
-    "name": "Andy Weston",
+    "name": "Mahmud Hasan Shakkhor",
     "email": "aweston@westonsoftware.com",
-    "url": "https://github.com/westonsoftware"
+    "url": "https://github.com/shakkhorpstu"
   },
   "contributors": [],
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/westonsoftware/vue-webrtc"
+    "url": "https://github.com/shakkhorpstu/vue-webrtc"
   },
   "license": "MIT",
   "devDependencies": {

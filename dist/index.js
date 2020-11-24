@@ -171,9 +171,13 @@ exports.default = {
   },
 
   props: {
+    audio: {
+      type: Boolean,
+      default: false
+    },
     roomId: {
       type: String,
-      default: 'public-room'
+      default: 'static-room'
     },
     socketURL: {
       type: String,
@@ -367,6 +371,39 @@ exports.default = {
           }, getDisplayMediaError).catch(getDisplayMediaError);
         }
       }
+    },
+    maximize: function maximize(id) {
+      var elem = document.getElementById(id);
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+    },
+    endTheCall: function endTheCall() {
+      if (this.videoList.length <= 1) {
+        this.leave();
+      }
+    },
+    getOwnVideoClass: function getOwnVideoClass(localVideo, audio) {
+      if (this.videoList.length > 1) {
+        if (!audio) {
+          return 'own-video';
+        } else {
+          return 'display-inline';
+        }
+      } else {
+        return '';
+      }
+    },
+    getLocalVideoClass: function getLocalVideoClass(localVideo) {
+      if (this.videoList.length > 1) {
+        return 'local-video';
+      } else {
+        return '';
+      }
     }
   }
 };
@@ -407,7 +444,7 @@ exports = module.exports = __webpack_require__(6)();
 
 
 // module
-exports.push([module.i, ".video-list[data-v-49ef9b35]{background:#f5f5f5;height:auto}.video-list div[data-v-49ef9b35]{padding:0}.video-item[data-v-49ef9b35]{background:#c5c4c4;display:inline-block}", ""]);
+exports.push([module.i, ".video-list[data-v-49ef9b35]{background:#f5f5f5;height:auto}.video-list div[data-v-49ef9b35]{padding:0}.display-inline[data-v-49ef9b35]{display:inline-block}video[data-v-49ef9b35]{object-fit:fill;height:320px}.own-video[data-v-49ef9b35]{position:absolute;bottom:65px;right:16px}.local-video[data-v-49ef9b35]{height:110px;width:145px}video[data-v-49ef9b35]::-webkit-media-controls-current-time-display,video[data-v-49ef9b35]::-webkit-media-controls-play-button{display:none!important}video[data-v-49ef9b35]::-webkit-media-controls-time-remaining-display,video[data-v-49ef9b35]::-webkit-media-controls-timeline{display:none!important}video[data-v-49ef9b35]::-webkit-media-controls-fullscreen-button,video[data-v-49ef9b35]::-webkit-media-controls-volume-slider{display:none!important}video[data-v-49ef9b35]::-internal-media-controls-download-button{display:none!important}audio[data-v-49ef9b35]::-webkit-media-controls-current-time-display,audio[data-v-49ef9b35]::-webkit-media-controls-play-button{display:none!important}audio[data-v-49ef9b35]::-webkit-media-controls-fullscreen-button,audio[data-v-49ef9b35]::-webkit-media-controls-volume-slider{display:none!important}audio[data-v-49ef9b35]::-internal-media-controls-download-button{display:none!important}", ""]);
 
 // exports
 
@@ -6642,16 +6679,17 @@ module.exports = function normalizeComponent (
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: "video-list"
-  }, _vm._l((_vm.videoList), function(item) {
-    return _c('div', {
+  }, [_vm._l((_vm.videoList), function(item) {
+    return (item.id != _vm.localVideo.id) ? _c('div', {
       key: item.id,
       staticClass: "video-item",
       attrs: {
         "video": item
       }
-    }, [_c('video', {
+    }, [(item.id != _vm.localVideo.id && !_vm.audio) ? _c('video', {
       ref: "videos",
       refInFor: true,
+      staticClass: "js-player",
       attrs: {
         "controls": "",
         "autoplay": "",
@@ -6661,9 +6699,58 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       },
       domProps: {
         "muted": item.muted
+      },
+      on: {
+        "click": function($event) {
+          return _vm.maximize(item.id)
+        }
       }
-    })])
-  }), 0)
+    }) : _vm._e(), _vm._v(" "), (item.id != _vm.localVideo.id && _vm.audio) ? _c('audio', {
+      ref: "videos",
+      refInFor: true,
+      attrs: {
+        "controls": "",
+        "autoplay": "",
+        "playsinline": "",
+        "muted": item.muted,
+        "id": item.id
+      }
+    }) : _vm._e()]) : _vm._e()
+  }), _vm._v(" "), _vm._l((_vm.videoList), function(item) {
+    return (item.id == _vm.localVideo.id) ? _c('div', {
+      key: item.id,
+      staticClass: "video-item",
+      class: _vm.getOwnVideoClass(_vm.localVideo, _vm.audio),
+      attrs: {
+        "video": item
+      }
+    }, [(!_vm.audio) ? _c('video', {
+      ref: "videos",
+      refInFor: true,
+      staticClass: "js-player",
+      class: _vm.getLocalVideoClass(_vm.localVideo),
+      attrs: {
+        "controls": "",
+        "autoplay": "",
+        "playsinline": "",
+        "height": _vm.cameraHeight,
+        "id": _vm.localVideo.id
+      },
+      domProps: {
+        "muted": _vm.localVideo.muted
+      }
+    }) : _vm._e(), _vm._v(" "), (_vm.audio) ? _c('audio', {
+      ref: "videos",
+      refInFor: true,
+      attrs: {
+        "controls": "",
+        "autoplay": "",
+        "playsinline": "",
+        "muted": _vm.localVideo.muted,
+        "id": _vm.localVideo.id
+      }
+    }) : _vm._e()]) : _vm._e()
+  })], 2)
 },staticRenderFns: []}
 
 /***/ }),

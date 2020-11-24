@@ -12,6 +12,7 @@
           <vue-webrtc ref="webrtc"
                       width="100%"
                       :roomId="roomId"
+                      :audio="audio"
                       v-on:joined-room="logEvent"
                       v-on:left-room="logEvent"
                       v-on:opened-room="logEvent"
@@ -25,6 +26,7 @@
             <button type="button" class="btn btn-primary" @click="onLeave">Leave</button>
             <button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button>
             <button type="button" class="btn btn-primary" @click="onShareScreen">Share Screen</button>
+            <button type="button" class="btn btn-primary" @click="onAudio">Audio</button>
           </div>
         </div>
       </div>
@@ -54,7 +56,8 @@
     data() {
       return {
         img: null,
-        roomId: "public-room"
+        roomId: "static-room",
+        audio: false
       };
     },
     computed: {
@@ -66,6 +69,10 @@
         this.img = this.$refs.webrtc.capture();
       },
       onJoin() {
+        this.$refs.webrtc.join();
+      },
+      onAudio() {
+        this.audio = true;
         this.$refs.webrtc.join();
       },
       onLeave() {
