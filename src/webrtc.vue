@@ -4,8 +4,8 @@
       <div v-for="item in videoList"
            v-if="item.id != localVideo.id"
            v-bind:video="item"
-           v-bind:key="item.id"
-           class="video-item">
+           v-bind:key="item.id"display-inline
+           :class="getAudioDiv()">
         <video class="js-player" controls v-if="item.id != localVideo.id && !audio" @click="maximize(item.id)" autoplay playsinline ref="videos" :height="cameraHeight" :muted="item.muted" :id="item.id"></video>
         <audio controls v-if="item.id != localVideo.id && audio" autoplay playsinline ref="videos" :muted="item.muted" :id="item.id"></audio>
       </div>
@@ -18,7 +18,7 @@
            class="video-item"
            :class="getOwnVideoClass(localVideo, audio)">
         <video class="js-player" :class="getLocalVideoClass(localVideo)" controls v-if="!audio" autoplay playsinline ref="videos" :height="cameraHeight" :muted="localVideo.muted" :id="localVideo.id"></video>
-        <audio class="" controls v-if="audio" autoplay playsinline ref="videos" :muted="localVideo.muted" :id="localVideo.id"></audio>
+        <audio class="" controls v-if="audio" autoplay playsinline ref="videos" muted="true"></audio>
       </div>
   </div>
 </template>
@@ -34,7 +34,9 @@
     data() {
       return {
         rtcmConnection: null,
-        localVideo: null,
+        localVideo: {
+          muted: true
+        },
         videoList: [],
         canvas: null,
       };
@@ -97,6 +99,10 @@
         audio: this.enableAudio,
         video: this.enableVideo
       };
+      // this.rtcmConnection.mediaConstraints = {
+      //   audio: this.enableAudio,
+      //   video: false
+      // };
       this.rtcmConnection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: this.enableAudio,
         OfferToReceiveVideo: this.enableVideo
@@ -273,6 +279,13 @@
         } else {
           return '';
         }
+      },
+      getAudioDiv() {
+        if(this.audio) {
+          return 'audio-div';
+        } else {
+          return '';
+        }
       }
     }
   };
@@ -284,6 +297,14 @@
   }
   .video-list div {
     padding: 0px;
+  }
+  .audio-div {
+    /*margin: 0;*/
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*-ms-transform: translateY(-50%);*/
+    /*transform: translateY(-137%);*/
+    display: inline-block;
   }
   .display-inline {
     display: inline-block;
@@ -337,6 +358,12 @@
     display: none !important;
   }
   audio::-internal-media-controls-download-button {
+    display: none !important;
+  }
+  audio::-webkit-media-controls-timeline {
+    display: none !important;
+  }
+  audio::-webkit-media-controls-time-remaining-display {
     display: none !important;
   }
 </style>
