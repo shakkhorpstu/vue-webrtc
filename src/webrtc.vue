@@ -6,8 +6,7 @@
            v-bind:video="item"
            v-bind:key="item.id"display-inline
            :class="getAudioDiv()">
-        <video class="js-player" controls v-if="item.id != localVideo.id && !audio" @click="maximize(item.id)" autoplay playsinline ref="videos" :height="cameraHeight" :muted="item.muted" :id="item.id"></video>
-        <audio controls v-if="item.id != localVideo.id && audio" autoplay playsinline ref="videos" :muted="item.muted" :id="item.id"></audio>
+        <video class="js-player" controls v-if="item.id != localVideo.id" @click="maximize(item.id)" autoplay playsinline ref="videos" :height="cameraHeight" :muted="item.muted" :id="item.id"></video>
       </div>
 
       <!--Local video-->
@@ -18,7 +17,6 @@
            class="video-item"
            :class="getOwnVideoClass(localVideo, audio)">
         <video class="js-player" :class="getLocalVideoClass(localVideo)" controls v-if="!audio" autoplay playsinline ref="videos" :height="cameraHeight" :muted="localVideo.muted" :id="localVideo.id"></video>
-        <audio class="" controls v-if="audio" autoplay playsinline ref="videos" muted="true"></audio>
       </div>
   </div>
 </template>
@@ -99,10 +97,6 @@
         audio: this.enableAudio,
         video: this.enableVideo
       };
-      // this.rtcmConnection.mediaConstraints = {
-      //   audio: this.enableAudio,
-      //   video: false
-      // };
       this.rtcmConnection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: this.enableAudio,
         OfferToReceiveVideo: this.enableVideo

@@ -10,6 +10,17 @@
       <div class="col-md-12">
         <div class="">
           <vue-webrtc ref="webrtc"
+                     width="100%"
+                     :roomId="roomId"
+                     :audio="audio"
+                     v-on:joined-room="logEvent"
+                     v-on:left-room="logEvent"
+                     v-on:opened-room="logEvent"
+                     v-on:share-started="logEvent"
+                     v-on:share-stopped="logEvent"
+                     @error="onError" />
+
+          <vue-audio ref="webrtcaudio"
                       width="100%"
                       :roomId="roomId"
                       :audio="audio"
@@ -44,10 +55,11 @@
 
 <script>
   import Vue from 'vue'
-  import { WebRTC } from 'plugin';
+  import { WebRTC, VueAudio } from 'plugin';
   import { find, head } from 'lodash';
 
   Vue.component(WebRTC.name, WebRTC);
+  Vue.component(VueAudio.name, VueAudio);
 
   export default {
     name: 'app',
@@ -57,7 +69,7 @@
       return {
         img: null,
         roomId: "static-room",
-        audio: false
+        audio: true
       };
     },
     computed: {
@@ -69,11 +81,12 @@
         this.img = this.$refs.webrtc.capture();
       },
       onJoin() {
+        this.audio = false;
         this.$refs.webrtc.join();
       },
       onAudio() {
         this.audio = true;
-        this.$refs.webrtc.join();
+        this.$refs.webrtcaudio.join();
       },
       onLeave() {
         this.$refs.webrtc.leave();
