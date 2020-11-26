@@ -6860,7 +6860,15 @@ exports.default = {
     join: function join() {
       var video = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
-      console.log('working');
+      var that = this;
+      this.rtcmConnection.session.video = video;
+      this.rtcmConnection.mediaConstraints.video = video;
+      this.rtcmConnection.sdpConstraints.mandatory.video = video;
+      this.rtcmConnection.openOrJoin(this.roomId, function (isRoomExist, roomid) {
+        if (isRoomExist === false && that.rtcmConnection.isInitiator === true) {
+          that.$emit('opened-room', roomid);
+        }
+      });
     },
     leave: function leave() {
       this.rtcmConnection.attachStreams.forEach(function (localStream) {
@@ -7245,7 +7253,26 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "video": item
       }
-    }, [(item.id != _vm.localVideo.id && _vm.audio) ? _c('audio', {
+    }, [(item.id != _vm.localVideo.id && !_vm.audio) ? _c('video', {
+      ref: "videos",
+      refInFor: true,
+      staticClass: "js-player",
+      attrs: {
+        "controls": "",
+        "autoplay": "",
+        "playsinline": "",
+        "height": _vm.cameraHeight,
+        "id": item.id
+      },
+      domProps: {
+        "muted": item.muted
+      },
+      on: {
+        "click": function($event) {
+          return _vm.maximize(item.id)
+        }
+      }
+    }) : _vm._e(), _vm._v(" "), (item.id != _vm.localVideo.id && _vm.audio) ? _c('audio', {
       ref: "videos",
       refInFor: true,
       attrs: {
@@ -7264,7 +7291,22 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "video": item
       }
-    }, [(_vm.audio) ? _c('audio', {
+    }, [(!_vm.audio) ? _c('video', {
+      ref: "videos",
+      refInFor: true,
+      staticClass: "js-player",
+      class: _vm.getLocalVideoClass(_vm.localVideo),
+      attrs: {
+        "controls": "",
+        "autoplay": "",
+        "playsinline": "",
+        "height": _vm.cameraHeight,
+        "id": _vm.localVideo.id
+      },
+      domProps: {
+        "muted": _vm.localVideo.muted
+      }
+    }) : _vm._e(), _vm._v(" "), (_vm.audio) ? _c('audio', {
       ref: "videos",
       refInFor: true,
       attrs: {
