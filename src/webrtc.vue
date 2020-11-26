@@ -6,7 +6,7 @@
            v-bind:video="item"
            v-bind:key="item.id"
            :class="getAudioDiv()">
-<!--        <video class="js-player" controls v-if="item.id != localVideo.id && !audio" @click="maximize(item.id)" autoplay playsinline ref="videos" :height="cameraHeight" :muted="item.muted" :id="item.id"></video>-->
+        <video class="js-player" controls v-if="item.id != localVideo.id && !audio" @click="maximize(item.id)" autoplay playsinline ref="videos" :height="cameraHeight" :muted="item.muted" :id="item.id"></video>
         <audio controls v-if="item.id != localVideo.id && audio" autoplay playsinline ref="videos" :muted="item.muted" :id="item.id"></audio>
       </div>
 
@@ -17,7 +17,7 @@
            v-bind:key="item.id"
            class="video-item"
            :class="getOwnVideoClass(localVideo, audio)">
-<!--        <video class="js-player" :class="getLocalVideoClass(localVideo)" controls v-if="!audio" autoplay playsinline ref="videos" :height="cameraHeight" :muted="localVideo.muted" :id="localVideo.id"></video>-->
+        <video class="js-player" :class="getLocalVideoClass(localVideo)" controls v-if="!audio" autoplay playsinline ref="videos" :height="cameraHeight" :muted="localVideo.muted" :id="localVideo.id"></video>
         <audio class="" controls autoplay playsinline v-if="audio" ref="videos" muted="true"></audio>
       </div>
   </div>
@@ -168,16 +168,15 @@
     },
     methods: {
       join(video = true) {
-        // var that = this;
-        console.log('working');
-        // this.rtcmConnection.session.video = video;
-        // this.rtcmConnection.mediaConstraints.video = video;
-        // this.rtcmConnection.sdpConstraints.mandatory.video = video;
-        //  this.rtcmConnection.openOrJoin(this.roomId, function (isRoomExist, roomid) {
-        //   if (isRoomExist === false && that.rtcmConnection.isInitiator === true) {
-        //     that.$emit('opened-room', roomid);
-        //   }
-        // });
+        var that = this;
+        this.rtcmConnection.session.video = video;
+        this.rtcmConnection.mediaConstraints.video = video;
+        this.rtcmConnection.sdpConstraints.mandatory.video = video;
+         this.rtcmConnection.openOrJoin(this.roomId, function (isRoomExist, roomid) {
+          if (isRoomExist === false && that.rtcmConnection.isInitiator === true) {
+            that.$emit('opened-room', roomid);
+          }
+        });
       },
       leave() {
         this.rtcmConnection.attachStreams.forEach(function (localStream) {

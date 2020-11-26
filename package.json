@@ -1,6 +1,6 @@
 {
   "name": "vue-webrtc-cm",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Regenerate WebRTC video component for Vue.js (Forked)",
   "main": "dist/index.js",
   "author": {
