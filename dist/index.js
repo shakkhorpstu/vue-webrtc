@@ -6723,9 +6723,7 @@ exports.default = {
   data: function data() {
     return {
       rtcmConnection: null,
-      localVideo: {
-        muted: true
-      },
+      localVideo: null,
       videoList: [],
       canvas: null
     };
@@ -6777,7 +6775,15 @@ exports.default = {
       default: null
     }
   },
-  watch: {},
+  watch: {
+    videoList: function videoList(val) {
+      if (val.length > 1) {
+        this.localVideo.muted = true;
+        var audio = document.getElementById(this.localVideo.id);
+        audio.muted = true;
+      }
+    }
+  },
   mounted: function mounted() {
     var that = this;
 
@@ -7247,7 +7253,33 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('div', {
     staticClass: "video-list"
   }, [_vm._l((_vm.videoList), function(item) {
-    return (item.id != _vm.localVideo.id) ? _c('div', {
+    return (_vm.audio) ? _c('div', {
+      key: item.id,
+      class: _vm.getAudioDiv(),
+      attrs: {
+        "video": item
+      }
+    }, [(item.id != _vm.localVideo.id && _vm.audio) ? _c('audio', {
+      ref: "videos",
+      refInFor: true,
+      attrs: {
+        "controls": "",
+        "muted": item.muted,
+        "id": item.id,
+        "autoplay": "",
+        "playsinline": ""
+      }
+    }) : _vm._e(), _vm._v(" "), (item.id == _vm.localVideo.id && _vm.audio) ? _c('audio', {
+      ref: "videos",
+      refInFor: true,
+      attrs: {
+        "controls": "",
+        "muted": item.muted,
+        "id": item.id
+      }
+    }) : _vm._e()]) : _vm._e()
+  }), _vm._v(" "), _vm._l((_vm.videoList), function(item) {
+    return (item.id != _vm.localVideo.id && !_vm.audio) ? _c('div', {
       key: item.id,
       class: _vm.getAudioDiv(),
       attrs: {
@@ -7272,19 +7304,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           return _vm.maximize(item.id)
         }
       }
-    }) : _vm._e(), _vm._v(" "), (item.id != _vm.localVideo.id && _vm.audio) ? _c('audio', {
-      ref: "videos",
-      refInFor: true,
-      attrs: {
-        "controls": "",
-        "autoplay": "",
-        "playsinline": "",
-        "muted": item.muted,
-        "id": item.id
-      }
     }) : _vm._e()]) : _vm._e()
   }), _vm._v(" "), _vm._l((_vm.videoList), function(item) {
-    return (item.id == _vm.localVideo.id) ? _c('div', {
+    return (item.id == _vm.localVideo.id && !_vm.audio) ? _c('div', {
       key: item.id,
       staticClass: "video-item",
       class: _vm.getOwnVideoClass(_vm.localVideo, _vm.audio),
@@ -7305,15 +7327,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       },
       domProps: {
         "muted": _vm.localVideo.muted
-      }
-    }) : _vm._e(), _vm._v(" "), (_vm.audio) ? _c('audio', {
-      ref: "videos",
-      refInFor: true,
-      attrs: {
-        "controls": "",
-        "autoplay": "",
-        "playsinline": "",
-        "muted": "true"
       }
     }) : _vm._e()]) : _vm._e()
   })], 2)
