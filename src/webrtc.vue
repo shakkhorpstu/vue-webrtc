@@ -6,7 +6,8 @@
            v-bind:video="item"
            v-bind:key="item.id"display-inline
            :class="getAudioDiv()">
-        <video class="js-player" controls v-if="item.id != localVideo.id" @click="maximize(item.id)" autoplay playsinline ref="videos" :height="cameraHeight" :muted="item.muted" :id="item.id"></video>
+        <video class="js-player" controls v-if="item.id != localVideo.id && !audio" @click="maximize(item.id)" autoplay playsinline ref="videos" :height="cameraHeight" :muted="item.muted" :id="item.id"></video>
+        <audio controls v-if="item.id != localVideo.id && audio" autoplay playsinline ref="videos" :muted="item.muted" :id="item.id"></audio>
       </div>
 
       <!--Local video-->
@@ -17,6 +18,7 @@
            class="video-item"
            :class="getOwnVideoClass(localVideo, audio)">
         <video class="js-player" :class="getLocalVideoClass(localVideo)" controls v-if="!audio" autoplay playsinline ref="videos" :height="cameraHeight" :muted="localVideo.muted" :id="localVideo.id"></video>
+        <audio class="" controls autoplay playsinline v-if="audio" ref="videos" muted="true"></audio>
       </div>
   </div>
 </template>
@@ -36,7 +38,7 @@
           muted: true
         },
         videoList: [],
-        canvas: null,
+        canvas: null
       };
     },
     props: {
@@ -50,7 +52,7 @@
       },
       socketURL: {
         type: String,
-        default: 'https://rtcmulticonnection.herokuapp.com:443/'
+        default: 'http://localhost:8009/'
       },
       cameraHeight: {
         type: [Number, String],
@@ -95,11 +97,15 @@
       this.rtcmConnection.enableLogs = this.enableLogs;
       this.rtcmConnection.session = {
         audio: this.enableAudio,
-        video: this.enableVideo
+        video: false
+      };
+      this.rtcmConnection.mediaConstraints = {
+        audio: this.enableAudio,
+        video: false
       };
       this.rtcmConnection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: this.enableAudio,
-        OfferToReceiveVideo: this.enableVideo
+        OfferToReceiveVideo: false
       };
       if ((this.stunServer !== null) || (this.turnServer !== null)) {
         this.rtcmConnection.iceServers = []; // clear all defaults
@@ -161,8 +167,12 @@
       };
     },
     methods: {
-      join() {
-         var that = this;
+      join(video = true) {
+        var that = this;
+        console.log(video);
+        this.rtcmConnection.session.video = video;
+        this.rtcmConnection.mediaConstraints.video = video;
+        this.rtcmConnection.sdpConstraints.mandatory.video = video;
          this.rtcmConnection.openOrJoin(this.roomId, function (isRoomExist, roomid) {
           if (isRoomExist === false && that.rtcmConnection.isInitiator === true) {
             that.$emit('opened-room', roomid);
@@ -256,6 +266,9 @@
           this.leave();
         }
       },
+      getTheCallList() {
+        this.$emit('getTheCallList', this.videoList);
+      },
       getOwnVideoClass(localVideo, audio) {
         if(this.videoList.length > 1) {
           if(!audio) {
@@ -305,7 +318,7 @@
   }
   video {
     object-fit: fill;
-    height: 320px;
+    height: auto !important;
   }
   .own-video {
     position: absolute;
