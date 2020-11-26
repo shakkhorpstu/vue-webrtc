@@ -2,23 +2,30 @@
   <div class="video-list" >
       <!--Live streaming-->
       <div v-for="item in videoList"
-           v-if="item.id != localVideo.id"
+           v-if="audio"
+           v-bind:video="item"
+           v-bind:key="item.id"
+           :class="getAudioDiv()">
+        <audio controls v-if="item.id != localVideo.id && audio" ref="videos" :muted="item.muted" :id="item.id" autoplay playsinline></audio>
+        <audio controls v-if="item.id == localVideo.id && audio" ref="videos" :muted="item.muted" :id="item.id"></audio>
+      </div>
+
+      <div v-for="item in videoList"
+           v-if="item.id != localVideo.id && !audio"
            v-bind:video="item"
            v-bind:key="item.id"
            :class="getAudioDiv()">
         <video class="js-player" controls v-if="item.id != localVideo.id && !audio" @click="maximize(item.id)" autoplay playsinline ref="videos" :height="cameraHeight" :muted="item.muted" :id="item.id"></video>
-        <audio controls v-if="item.id != localVideo.id && audio" autoplay playsinline ref="videos" :muted="item.muted" :id="item.id"></audio>
       </div>
 
       <!--Local video-->
       <div v-for="item in videoList"
-           v-if="item.id == localVideo.id"
+           v-if="item.id == localVideo.id && !audio"
            v-bind:video="item"
            v-bind:key="item.id"
            class="video-item"
            :class="getOwnVideoClass(localVideo, audio)">
         <video class="js-player" :class="getLocalVideoClass(localVideo)" controls v-if="!audio" autoplay playsinline ref="videos" :height="cameraHeight" :muted="localVideo.muted" :id="localVideo.id"></video>
-        <audio class="" controls autoplay playsinline v-if="audio" ref="videos" muted="true"></audio>
       </div>
   </div>
 </template>
@@ -34,9 +41,7 @@
     data() {
       return {
         rtcmConnection: null,
-        localVideo: {
-          muted: true
-        },
+        localVideo: null,
         videoList: [],
         canvas: null
       };
@@ -87,7 +92,15 @@
         default: null
       }
     },
-    watch: {},
+    watch: {
+      videoList: function (val) {
+        if(val.length > 1) {
+          this.localVideo.muted = true;
+          const audio = document.getElementById(this.localVideo.id);
+          audio.muted = true;
+        }
+      }
+    },
     mounted() {
       var that = this;
 
