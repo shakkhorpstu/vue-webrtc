@@ -168,7 +168,7 @@
     },
     methods: {
       join(video = true) {
-        var that = this;
+        // var that = this;
         console.log('working');
         // this.rtcmConnection.session.video = video;
         // this.rtcmConnection.mediaConstraints.video = video;
